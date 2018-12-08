@@ -10,7 +10,7 @@ class Thermometer(object):
         self.sensor_pin = 0
         readadc.initialize()
 
-    def read(self,n_counts=1000):
+    def read(self,n_counts=2000):
 
         self.temp_C_arr = np.zeros(n_counts)
         self.temp_F_arr = np.zeros(n_counts)
@@ -33,7 +33,7 @@ class Thermometer(object):
             # add to array for averaging
             self.temp_C_arr[n] = temp_C
             self.temp_F_arr[n] = temp_F
-            time.sleep(0.002)
+            time.sleep(0.001)
  
 
         self.temp_F = np.mean(self.temp_F_arr)
