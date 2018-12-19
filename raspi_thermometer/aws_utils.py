@@ -1,14 +1,16 @@
-from __future__ import print_function # Python 2/3 compatibility
+from __future__ import print_function  # Python 2/3 compatibility
 import boto3
 import json
 import decimal
 
+
 def create_table():
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2', endpoint_url="http://dynamodb.us-west-2.amazonaws.com")
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2',
+                              endpoint_url="http://dynamodb.us-west-2.amazonaws.com")
     table = dynamodb.create_table(
         TableName='temperature_monitor_1_pi',
-        KeySchema= [ 
-            { 
+        KeySchema=[
+            {
                 "AttributeName": "timestamp",
                 "KeyType": 'HASH'
             }
@@ -27,24 +29,28 @@ def create_table():
 
     print("Table status:", table.table_status)
 
-def add_item(timestamp,temperature,table='temperature_monitor_1_pi'):
 
-    dynamodb = boto3.resource('dynamodb', region_name='us-west-2', endpoint_url="http://dynamodb.us-west-2.amazonaws.com")
+def add_item(timestamp, temperature, humidity=None, table='temperature_monitor_2'):
+
+    dynamodb = boto3.resource('dynamodb', region_name='us-west-2',
+                              endpoint_url="http://dynamodb.us-west-2.amazonaws.com")
 
     table = dynamodb.Table(table)
 
-    print("Adding timestamp = {}, temperature = {} to table {}".format(str(timestamp),temperature,table))
+    print("Adding timestamp = {}, temperature = {}, humidity = {} to table {}".format(
+        str(timestamp), temperature, humidity, table))
 
     return_statement = table.put_item(
         Item={
             'timestamp': str(timestamp),
             'temperature': decimal.Decimal(str(temperature)),
-            }
+            'humidity': decimal.Decimal(str(humidity)),
+        }
     )
     print('return statement = \n{}'.format(return_statement))
 
 
-def scan(table='temperature_monitor_1_pi'):
+def scan(table='temperature_monitor_2'):
     # Helper class to convert a DynamoDB item to JSON.
     class DecimalEncoder(json.JSONEncoder):
         def default(self, o):
